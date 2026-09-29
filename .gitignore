@@ -3,3 +3,4 @@ __pycache__/
 *.pt
 *.db
 data/alarms/
+.idea/
