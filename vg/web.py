@@ -4,12 +4,13 @@ import sqlite3
 import cv2
 import os
 import settings
-import stats
 
 app = Flask(__name__)
 
 #共享画板：main 工人每帧更新，直播工人每刻来取
-LATEST = {"vis":None}
+LATEST = {"vis":None, "scene":None}
+def bind_scene(sc):
+    LATEST["scene"] = sc
 
 def start_server():
     # 服务器工人站前台：0.0.0.0允许局域网访问
@@ -58,8 +59,13 @@ def pic(name):
 
 @app.route("/stats")
 def stats_page():
+    # 从画板取盒子
+    sc = LATEST["scene"]
+    if sc is None:
+        return "<h1>Stats</h1><p>场景还没上线</p>"
     html = "<h1>人数统计</h1>"
-    html = html + "<p>累计经过人数"+ str(stats.total_person()) + "</p>"
-    html = html + "<p>停留超10s人数：" + str(stats.long_stayers(10)) + "</p>"
+    html = html + "<p>累计经过人数"+ str(sc.total_persons()) + "</p>"
+    html = html + "<p>停留超10s人数：" + str(sc.long_stayers(10)) + "</p>"
     html = html + '<p><a href="/">回直播</a> | <a href="/history">报警历史</a></p>'
     return html
+
