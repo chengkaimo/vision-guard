@@ -1,0 +1,22 @@
+
+{% extends "base.html" %}       {# 指令：继承母版，套壳 #}
+
+{% block head%}
+<meta http-equiv="refresh" content="3">     {# 每3s浏览器自己重发一次GET刷新#}
+{% endblock %}
+
+{% block content %}
+{# 把该页内容填进母版的content洞里 #}
+<h1>人数统计</h1>
+<p class="sub">跟踪工号去重，账本由Scene盒子实时维护</p>
+
+{% if online %}
+    <div class="card serif">
+        累计经过{{ total }}人，其中停留超过{{ seconds }}秒的有{{stayers}}人。
+    </div>
+{% else %}
+    <div class="card empty">场景还没上线，等run.py跑起来，请稍等~~</div>
+{% endif %}
+
+{# extends 和 block 是一对，母版挖洞、子版填洞。填完洞，剩下的壳照用 #}
+{% endblock %}

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ page_title }}</title>
+    {% block head%}{% endblock %}    {# 各页面自己的头部配置 #}
+    <style>
+        :root {
+            --bg: #f5f4ef;       /*背景色 暖米白色*/
+            --card: #fbfaf6;      /*卡片  浅米白色*/
+            --ink: #3d3d3a;      /*正文 暖灰黑*/
+            --line: #e0dcd0;    /*边框线 浅卡其*/
+            --accent: #d97757;  /*强调色 珊瑚橘*/
+            --muted: #8b867a;   /*次要文字 浅灰色*/
+        }
+        *{
+            box-sizing: border-box;     /*让padding不算进宽度*/
+        }
+        body {
+            margin: 0;
+            background: var(--bg);      /*var()可以取到上面名字的颜色*/
+            color: var(--ink);
+            font-family: -apple-system,"Segoe UI", "Microsoft YaHei", sans-serif;
+            line-height:1.6;
+        }
+        .serif {
+            font-family: Georgia, "Times New Roman", serif;     /*标题 衬线体*/
+        }
+        nav {
+            display: flex;
+            gap: 28px;          /*链接间留空*/
+            padding: 18px 40px;
+            border-bottom: 1px solid var(--line);
+            align-items: baseline;      /*文字底部对齐*/
+        }
+        nav .logo {
+            font-family: Georgia, serif;
+            font-size: 20px;
+            color: var(--accent);
+        }
+        nav a {
+            color: var(--muted);
+            text-decoration: none;      /*去除超链接的显示下划线*/
+        }
+        nav a:hover {
+            color:var(--ink);       /*鼠标碰到上方才变色*/
+        }
+        main {
+            max-width: 1100px;
+            margin: 0 auto;         /*内容居中 两边留白 不铺满整屏*/
+            padding: 40px;
+        }
+        h1 {
+            font-family: Georgia, serif;
+            font-weight: 500;
+            font-size: 32px;
+            margin: 0 0 8px;
+        }
+        .sub {
+            color: var(--muted);
+            font-size: 15px;
+            margin:  0 0 28px;      /*小标题下的一行说明*/
+        }
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 15px;
+        }
+        th {
+            text-align: left;
+            color: var(--muted);
+            font-weight: 500;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--line);
+        }
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--line);
+        }
+        tr:hover td {
+            background: rgba(217, 119, 87, 0.06);       /*在扫表格时，行悬停时变橘色*/
+        }
+        img {
+            border-radius: 10px;
+            display: block;
+        }
+        .video-card, .empty {
+            color: var(--muted);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <span class="logo">Vision Guard</span>
+        <a href="/">直播</a>
+        <a href="/stats">人数统计</a>
+        <a href="/history">报警历史</a>
+    </nav>
+    <main>
+        {% block content %}{% endblock %}     {# 指令：子模版来覆盖 #}
+    </main>
+</body>
+</html>

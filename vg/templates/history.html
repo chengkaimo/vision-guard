@@ -1,0 +1,34 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<h1>报警历史</h1>
+<p class="sub">最近20条入库记录，新入库记录排在前面</p>
+
+<div class="card">
+    {% if count == 0 %}
+        <p class="empty">目前还没有报警记录，程序运行一会后再来看</p>
+    {% else %}
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>时间</th>
+                <th>类别</th>
+                <th>置信度</th>
+                <th>证据</th>
+            </tr>
+
+            {% for row in records %}
+            <tr>
+                <td>{{ row.id }}</td>
+                <td>{{ row.time }}</td>
+                <td>{{ row.class_name }}</td>
+                <td>{{ row.conf }}</td>
+                <td><img src="/pic/{{ row.pic }}" width="200" /> </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+</div>
+{% endblock %}

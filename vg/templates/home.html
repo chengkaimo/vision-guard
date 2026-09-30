@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>实时直播</h1>
+<p class="sub">当前场景：{{ scene_name }} | 报警名单：{{ alarm_list }}</p>
+
+<div class="card">
+    <img src="/video" style="width: 100%"/>
+</div>
+
+<p class="sub">桌面窗口按Q退出 | 网页关闭后，不影响检测</p>
+{% endblock %}
