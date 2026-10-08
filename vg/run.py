@@ -7,8 +7,10 @@ import time
 import os
 import web
 import threading
-# import scene as scene_module
 from scene import Scene
+import metrics
+from vg.metrics import Perf
+
 
 def main():
     model = detector.load_model() # 获取模型来源
@@ -19,7 +21,11 @@ def main():
     server.start()
     scene = Scene(settings.SCENE_NAME, settings.ALARM_CLASSES, settings.ALARM_FRAMES)
     web.bind_scene(scene)
+    perf = metrics.Perf()
+    web.bind_perf(perf)
+
     while True:
+        t0 = time.time()
         ok, frame = camera.read_frame(cap)
         if not ok:
             print("断流了，3s后重连")
@@ -28,7 +34,6 @@ def main():
             cap = camera.open_camera()
             continue
 
-        # vis, found = detector.detect(model, frame)
         vis, found = detector.detect_track(model, frame)
 
         cv2.imshow(settings.WINDOW_NAME, vis)
@@ -43,6 +48,7 @@ def main():
             alarm.save_alarm(alarm_name, alarm_conf, image_path)
             print("报警入库", alarm_name)
 
+        perf.tick(time.time() - t0)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 

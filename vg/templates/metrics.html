@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    .grid { display: flex; gap: 16px; flex-wrap: wrap; }
+    .num-card { flex: 1; min-width: 150px; }
+    .big { font-family: Georgia, serif; font-size: 40px; color: var(--accent); }
+    .unit { color: var(--muted); font-size: 14px; }
+    #bars { display: flex; align-items: flex-end; height: 70px; gap: 2px; }
+    .bar { width: 6px; background: var(--accent); border-radius: 2px 2px 0 0; }
+</style>
+<script>
+    function tick() {
+        fetch("/api/metrics")
+            .then(function (resp) { return resp.json(); })
+            .then(function (data) {
+                if (!data.online) {
+                    document.getElementById("fps").innerText = "-";
+                    return;
+                }
+                document.getElementById("fps").innerText = data.fps;
+                document.getElementById("ms").innerText = data.ms;
+                document.getElementById("frames").innerText = data.frames;
+                document.getElementById("uptime").innerText = data.uptime;
+
+                var html = "";
+                for (var i = 0; i < data.recent.length; i++) {
+                    var h = data.recent[i] * 0.6;      // 毫秒映射成像素高
+                    if (h > 70) { h = 70; }
+                    if (h < 2) { h = 2; }
+                    html = html + '<div class="bar" style="height:' + h + 'px"></div>';
+                }
+                document.getElementById("bars").innerHTML = html;
+            });
+    }
+    tick();
+    setInterval(tick, 1000);
+</script>
+{% endblock %}
+
+{% block content %}
+<h1>性能仪表盘</h1>
+<p class="sub">每秒采样一次 ｜ 柱状图 = 最近 60 帧的单帧耗时，越高越慢</p>
+
+<div class="grid">
+    <div class="card num-card"><div class="big" id="fps">-</div><div class="unit">FPS 每秒帧数</div></div>
+    <div class="card num-card"><div class="big" id="ms">-</div><div class="unit">ms 单帧耗时</div></div>
+    <div class="card num-card"><div class="big" id="frames">-</div><div class="unit">累计帧数</div></div>
+    <div class="card num-card"><div class="big" id="uptime">-</div><div class="unit">秒 运行时长</div></div>
+</div>
+
+<div class="card">
+    <div id="bars"></div>
+</div>
+{% endblock %}

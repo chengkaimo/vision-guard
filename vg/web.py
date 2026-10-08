@@ -1,6 +1,7 @@
 import time
 from flask import Flask
 from flask import render_template
+from flask import jsonify  # 把字典变成JSON的工具
 import sqlite3
 import cv2
 import os
@@ -9,9 +10,11 @@ import settings
 app = Flask(__name__)
 
 #共享画板：main 工人每帧更新，直播工人每刻来取
-LATEST = {"vis":None, "scene":None}
+LATEST = {"vis":None, "scene":None, "perf":None}
 def bind_scene(scene):
     LATEST["scene"] = scene
+def bind_perf(perf):
+    LATEST["perf"] = perf
 
 def start_server():
     # 服务器工人站前台：0.0.0.0允许局域网访问
@@ -92,3 +95,31 @@ def stats_page():
         online = True
     )
 
+# 原始数据的接口
+@app.route("/api/stats")
+def api_stats():
+    scene = LATEST["scene"]
+    if scene is None:
+        return jsonify({"online":False, "total": 0, "stayers": 0, "seconds":10})
+
+    return jsonify(
+        {
+            "online":True,
+            "total":scene.total_persons(),
+            "stayers":scene.long_stayers(10),
+            "seconds": 10
+        }
+    )
+
+@app.route("/api/metrics")
+def api_metrics():
+    perf = LATEST["perf"]
+    if perf is None:
+        return jsonify({"online":False, "fps": 0, "ms": 0, "frames":10,"uptime":0,"recent":[]})
+    data = perf.snapshot()
+    data["online"] = True
+    return jsonify(data)
+
+@app.route("/metrics")
+def metrics_page():
+    return render_template("metrics.html", page_title="性能仪表盘")

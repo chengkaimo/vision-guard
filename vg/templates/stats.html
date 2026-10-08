@@ -2,21 +2,36 @@
 {% extends "base.html" %}       {# 指令：继承母版，套壳 #}
 
 {% block head%}
-<meta http-equiv="refresh" content="3">     {# 每3s浏览器自己重发一次GET刷新#}
+<script>
+    function tick() {
+        fetch("/api/stats")
+            .then(function (resp){ return resp.json(); })
+            .then(function (data){
+                var status = document.getElementById("status");
+                var numbers = document.getElementById("numbers");
+                if (data.online) {
+                    status.innerText = "场景在线";
+                    numbers.innerText = "累计经过" + data.total + "人，其中停留超过" + data.seconds + "秒的有" + data.stayers + "人。";
+                } else {
+                    status.innerText = "场景还没上线";
+                    numbers.innerText = "等run.py 跑起来，请稍等~~";
+                }
+            });
+    }
+    tick();
+    setInterval(tick, 1000);
+</script>
+
 {% endblock %}
 
 {% block content %}
-{# 把该页内容填进母版的content洞里 #}
+
 <h1>人数统计</h1>
-<p class="sub">跟踪工号去重，账本由Scene盒子实时维护</p>
+<p class="sub">每秒自动问一次接口，只换了数字，页面不重载</p>
 
-{% if online %}
     <div class="card serif">
-        累计经过{{ total }}人，其中停留超过{{ seconds }}秒的有{{stayers}}人。
+        <p id="status">正在连接...</p>
+        <p id="numbers"></p>
     </div>
-{% else %}
-    <div class="card empty">场景还没上线，等run.py跑起来，请稍等~~</div>
-{% endif %}
 
-{# extends 和 block 是一对，母版挖洞、子版填洞。填完洞，剩下的壳照用 #}
 {% endblock %}
