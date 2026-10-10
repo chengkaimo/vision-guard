@@ -9,7 +9,6 @@ import web
 import threading
 from scene import Scene
 import metrics
-from vg.metrics import Perf
 
 
 def main():
@@ -19,13 +18,15 @@ def main():
     alarm.init_db() # 获取数据库
     server = threading.Thread(target=web.start_server, daemon=True)
     server.start()
+
     scene = Scene(settings.SCENE_NAME, settings.ALARM_CLASSES, settings.ALARM_FRAMES)
     web.bind_scene(scene)
+
     perf = metrics.Perf()
     web.bind_perf(perf)
 
     while True:
-        t0 = time.time()
+        t0 = time.time()  # t0是指本帧的起点时刻
         ok, frame = camera.read_frame(cap)
         if not ok:
             print("断流了，3s后重连")

@@ -2,12 +2,12 @@
 
 {% block head %}
 <style>
-    .grid { display: flex; gap: 16px; flex-wrap: wrap; }
-    .num-card { flex: 1; min-width: 150px; }
-    .big { font-family: Georgia, serif; font-size: 40px; color: var(--accent); }
-    .unit { color: var(--muted); font-size: 14px; }
-    #bars { display: flex; align-items: flex-end; height: 70px; gap: 2px; }
-    .bar { width: 6px; background: var(--accent); border-radius: 2px 2px 0 0; }
+    .grid { display: flex; gap: 16px; flex-wrap: wrap; }    /* 四张卡横排，挤不下就换行 */
+    .num-card { flex: 1; min-width: 150px; }        /* 每张卡平分宽度，最窄150 */
+    .big { font-family: Georgia, serif; font-size: 40px; color: var(--accent); }    /* 大数字 */
+    .unit { color: var(--muted); font-size: 14px; }     /* 数字下面那行小字 */
+    #bars { display: flex; align-items: flex-end; height: 70px; gap: 2px; }     /* 柱子容器：底对齐 */
+    .bar { width: 6px; background: var(--accent); border-radius: 2px 2px 0 0; }     /* 单根柱子 */
 </style>
 <script>
     function tick() {
