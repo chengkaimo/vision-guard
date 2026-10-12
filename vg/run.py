@@ -15,11 +15,12 @@ from source import Source
 def main():
     model = detector.load_model() # 获取模型来源
 
-    # cap = camera.open_camera()  # 获取视频源
-    src = Source(settings.SOURCE_KIND, settings.SOURCE)
+    first = settings.SOURCES[0]
+    src = Source(first["kind"], first["value"])
     if not src.open():
         print("源打不开：", src.label())
         return  # 开不了就打印名字，然后下班退出main()，不进循环，拦截
+    web.LATEST["source_label"] = src.label()
 
     alarm.init_db() # 获取数据库
     server = threading.Thread(target=web.start_server, daemon=True)
@@ -32,6 +33,18 @@ def main():
     web.bind_perf(perf)
 
     while True:
+        pending = web.take_pending_source()
+        if pending is not None:
+            kind, value = pending   #二元组拆包
+            src.release()
+            src = Source(kind, value)
+            if src.open():
+                web.LATEST["source_label"] = src.label()
+                print("已换源：", src.label())
+            else:
+                print("换源失败：", src.label())
+            continue        # 本圈只干换源这一件事 换源这一圈不检测 不要计时不准的假数据
+
         t0 = time.time()  # t0是指本帧的起点时刻
         ok, frame = src.read()
         if not ok:

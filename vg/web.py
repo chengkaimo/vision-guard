@@ -2,6 +2,7 @@ import time
 from flask import Flask
 from flask import render_template
 from flask import jsonify  # 把字典变成JSON的工具
+from flask import request
 import sqlite3
 import cv2
 import os
@@ -10,7 +11,8 @@ import settings
 app = Flask(__name__)
 
 #共享画板：main 工人每帧更新，直播工人每刻来取
-LATEST = {"vis":None, "scene":None, "perf":None}
+LATEST = {"vis":None, "scene":None, "perf":None, "pending_source":None, "source_label":"-"}
+
 def bind_scene(scene):
     LATEST["scene"] = scene
 def bind_perf(perf):
@@ -19,6 +21,11 @@ def bind_perf(perf):
 def start_server():
     # 服务器工人站前台：0.0.0.0允许局域网访问
     app.run(host="0.0.0.0", port=settings.WEB_PORT, threaded=True)
+
+def take_pending_source():
+    pending = LATEST["pending_source"]
+    LATEST["pending_source"] = None  # 取到场景就重置
+    return pending
 
 @app.route("/")
 def index():
@@ -123,3 +130,24 @@ def api_metrics():
 @app.route("/metrics")
 def metrics_page():
     return render_template("metrics.html", page_title="性能仪表盘")
+
+
+@app.route("/api/sources")
+def api_sources():
+    menu = []
+    for i in range(len(settings.SOURCES)):
+        s = settings.SOURCES[i]
+        menu.append({ "i":i, "name":s["name"], "kind":s["kind"] })
+    return jsonify({ "menu":menu, "current":LATEST["source_label"]})
+
+@app.route("/api/set_source")
+def api_set_source():
+    i = request.args.get("i")  # URL 里 ?i=1 这部分叫查询参数，Flask 把它拆进 request.args 这个类字典 取i的值（字符串）
+    if i is None:
+        return jsonify({ "ok":False, "msg":"缺参数 i" })  #1.检查缺参数吗
+    i = int(i)
+    if i < 0 or i>=len(settings.SOURCES):
+        return jsonify({ "ok":False, "msg":"i越界：" + str(i)})  #2.检查越界了吗
+    s = settings.SOURCES[i]
+    LATEST["pending_source"] = (s["kind"], s["value"])  # 用元组打包两个
+    return jsonify({ "ok":True, "msg":"已下单：" + s["name"] })

@@ -10,9 +10,15 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODEL_PATH = os.path.join(BASE_DIR, "weights", "yolo11m.pt")
 # SOURCE = os.path.join(BASE_DIR, "data", "raw", "traffic1.mp4")
-SOURCE = 0
+# SOURCE = 0
 # SOURCE = "rtsp://admin:qlhk&1111@192.168.8.222:554/1/2"
-SOURCE_KIND = "camera"  # video/camera/rtsp/image
+# SOURCE_KIND = "camera"  # video/camera/rtsp/image
+SOURCES = [
+    {"kind": "video",  "value": os.path.join(BASE_DIR, "data", "raw", "crowd1.mp4"), "name": "人群视频"},
+    {"kind": "video",  "value": os.path.join(BASE_DIR, "data", "raw", "fire.mp4"),  "name": "火焰视频"},
+    {"kind": "camera", "value": 0,                                                  "name": "本机摄像头"},
+    {"kind": "image", "value": os.path.join(BASE_DIR, "data", "alarms", "alarm_20260930-155938.jpg"), "name":"照片"}
+]
 
 SCENE_NAME = ["厂区安全监控"]
 ALARM_CLASSES = ["fire", "smoke", "light","person"]  # 触发警报的类
