@@ -9,11 +9,17 @@ import web
 import threading
 from scene import Scene
 import metrics
+from source import Source
 
 
 def main():
     model = detector.load_model() # 获取模型来源
-    cap = camera.open_camera()  # 获取视频源
+
+    # cap = camera.open_camera()  # 获取视频源
+    src = Source(settings.SOURCE_KIND, settings.SOURCE)
+    if not src.open():
+        print("源打不开：", src.label())
+        return  # 开不了就打印名字，然后下班退出main()，不进循环，拦截
 
     alarm.init_db() # 获取数据库
     server = threading.Thread(target=web.start_server, daemon=True)
@@ -27,12 +33,12 @@ def main():
 
     while True:
         t0 = time.time()  # t0是指本帧的起点时刻
-        ok, frame = camera.read_frame(cap)
+        ok, frame = src.read()
         if not ok:
             print("断流了，3s后重连")
             cv2.waitKey(3000)
-            cap.release()
-            cap = camera.open_camera()
+            src.release()
+            src.open()
             continue
 
         vis, found = detector.detect_track(model, frame)
@@ -53,7 +59,7 @@ def main():
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-    cap.release()
+    src.release()
     cv2.destroyAllWindows()
 
 

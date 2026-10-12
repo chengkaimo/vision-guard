@@ -9,9 +9,10 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODEL_PATH = os.path.join(BASE_DIR, "weights", "yolo11m.pt")
-SOURCE = os.path.join(BASE_DIR, "data", "raw", "crowd1.mp4")
-# SOURCE = 0
+# SOURCE = os.path.join(BASE_DIR, "data", "raw", "traffic1.mp4")
+SOURCE = 0
 # SOURCE = "rtsp://admin:qlhk&1111@192.168.8.222:554/1/2"
+SOURCE_KIND = "camera"  # video/camera/rtsp/image
 
 SCENE_NAME = ["厂区安全监控"]
 ALARM_CLASSES = ["fire", "smoke", "light","person"]  # 触发警报的类
