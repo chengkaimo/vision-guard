@@ -14,10 +14,10 @@ MODELS = [
     {"path": os.path.join(BASE_DIR, "weights", "helmet_yolov8m.pt"), "name": "安全帽 Hardhat/NO-Hardhat"},
 ]
 
-# SOURCE = os.path.join(BASE_DIR, "data", "raw", "traffic1.mp4")
 # SOURCE = 0
 # SOURCE = "rtsp://admin:qlhk&1111@192.168.8.222:554/1/2"
 # SOURCE_KIND = "camera"  # video/camera/rtsp/image
+
 SOURCES = [
     {"kind": "video",  "value": os.path.join(BASE_DIR, "data", "raw", "crowd1.mp4"), "name": "人群视频"},
     {"kind": "video",  "value": os.path.join(BASE_DIR, "data", "raw", "fire.mp4"),  "name": "火焰视频"},
@@ -25,9 +25,12 @@ SOURCES = [
     {"kind": "image", "value": os.path.join(BASE_DIR, "data", "alarms", "alarm_20260930-155938.jpg"), "name":"照片"}
 ]
 
-SCENE_NAME = ["厂区安全监控"]
-ALARM_CLASSES = ["fire", "smoke", "light","person"]  # 触发警报的类
-ALARM_FRAMES = 5  # 消抖帧数
+SCENES = [
+    {"name": "厂区消防",   "model": 0, "classes": ["fire", "smoke"],  "frames": 5},
+    {"name": "工地安全帽", "model": 1, "classes": ["NO-Hardhat"],     "frames": 5},
+    {"name": "人员统计",   "model": 0, "classes": ["person"],         "frames": 5},
+]
+
 ALARM_DIR = os.path.join(BASE_DIR, "data", "alarms")  # 报警图片记录
 
 DB_PATH = os.path.join(BASE_DIR, "data", "alarms.db")  # 数据库存记录

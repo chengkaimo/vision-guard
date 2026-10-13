@@ -11,7 +11,7 @@ import settings
 app = Flask(__name__)
 
 #共享画板：main 工人每帧更新，直播工人每刻来取
-LATEST = {"vis":None, "scene":None, "perf":None, "pending_source":None, "source_label":"-","pending_model":None, "model_label":"-"}
+LATEST = {"vis":None, "scene":None, "perf":None, "pending_source":None, "source_label":"-","pending_model":None, "model_label":"-", "pending_scene":None, "scene_label":"-"}
 
 def bind_scene(scene):
     LATEST["scene"] = scene
@@ -30,6 +30,11 @@ def take_pending_source():
 def take_pending_model():
     p = LATEST["pending_model"]
     LATEST["pending_model"] = None
+    return p
+
+def take_pending_scene():
+    p = LATEST["pending_scene"]
+    LATEST["pending_scene"] = None
     return p
 
 @app.route("/")
@@ -175,3 +180,22 @@ def api_set_model():
         return jsonify({"ok":False, "msg":"i越界" + str(i)})
     LATEST["pending_model"] = i  # 换权只给下标i 让主循环自己查菜单权重 这样路径就不容易抄错
     return jsonify({"ok":True, "msg":"已下单：" + settings.MODELS[i]["name"]})
+
+
+@app.route("/api/scenes")
+def api_scenes():
+    menu = []
+    for i in range(len(settings.SCENES)):
+        menu.append({"i":i, "name":settings.SCENES[i]["name"]})
+    return jsonify({"menu":menu, "current":LATEST["scene_label"]})
+
+@app.route("/api/set_scene")
+def api_set_scene():
+    i = request.args.get("i")
+    if i is None:
+        return jsonify({"ok":False, "msg":"缺参数 i"})
+    i = int(i)
+    if i < 0 or i >= len(settings.SCENES):
+        return jsonify({"ok":False, "msg":"i越界：" + str(i)})
+    LATEST["pending_scene"] = i
+    return jsonify({"ok":True, "msg":"已下单：" + settings.SCENES[i]["name"]})
