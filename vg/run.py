@@ -1,6 +1,5 @@
 import cv2
 import settings
-import camera
 import detector
 import alarm
 import time
@@ -13,7 +12,11 @@ from source import Source
 
 
 def main():
-    model = detector.load_model() # 获取模型来源
+    # model = detector.load_model() # 获取模型来源
+    first_model = settings.MODELS[0]
+    model = detector.load(first_model["path"])  # settings.MODELS[0]["path"]
+    web.LATEST["model_label"] = first_model["name"]
+    print("当前类别表：", model.names)  # model.names是类别表 字典 编号→名字
 
     first = settings.SOURCES[0]
     src = Source(first["kind"], first["value"])
@@ -44,6 +47,16 @@ def main():
             else:
                 print("换源失败：", src.label())
             continue        # 本圈只干换源这一件事 换源这一圈不检测 不要计时不准的假数据
+
+        pending_model = web.take_pending_model()
+        if pending_model is not None:
+            m = settings.MODELS[pending_model]
+            del model                                   # 卸掉旧的模型，腾出点显存空间
+            model = detector.load(m["path"])
+            web.LATEST["model_label"] = m["name"]
+            print("已经换了权重：", m["name"])
+            print("新的类别表：", model.names)
+            continue                                    # 同上 加载这几秒不记时不检测
 
         t0 = time.time()  # t0是指本帧的起点时刻
         ok, frame = src.read()

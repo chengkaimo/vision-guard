@@ -11,7 +11,7 @@ import settings
 app = Flask(__name__)
 
 #共享画板：main 工人每帧更新，直播工人每刻来取
-LATEST = {"vis":None, "scene":None, "perf":None, "pending_source":None, "source_label":"-"}
+LATEST = {"vis":None, "scene":None, "perf":None, "pending_source":None, "source_label":"-","pending_model":None, "model_label":"-"}
 
 def bind_scene(scene):
     LATEST["scene"] = scene
@@ -26,6 +26,11 @@ def take_pending_source():
     pending = LATEST["pending_source"]
     LATEST["pending_source"] = None  # 取到场景就重置
     return pending
+
+def take_pending_model():
+    p = LATEST["pending_model"]
+    LATEST["pending_model"] = None
+    return p
 
 @app.route("/")
 def index():
@@ -151,3 +156,22 @@ def api_set_source():
     s = settings.SOURCES[i]
     LATEST["pending_source"] = (s["kind"], s["value"])  # 用元组打包两个
     return jsonify({ "ok":True, "msg":"已下单：" + s["name"] })
+
+
+@app.route("/api/models")
+def api_models():
+    menu = []
+    for i in range(len(settings.MODELS)):
+        menu.append({ "i":i, "name":settings.MODELS[i]["name"] })
+    return jsonify({ "menu":menu, "current":LATEST["model_label"]})
+
+@app.route("/api/set_model")
+def api_set_model():
+    i = request.args.get("i")
+    if i is None:
+        return jsonify({"ok":False, "msg":"缺参数i"})
+    i = int(i)
+    if i < 0 or i >=len(settings.MODELS):
+        return jsonify({"ok":False, "msg":"i越界" + str(i)})
+    LATEST["pending_model"] = i  # 换权只给下标i 让主循环自己查菜单权重 这样路径就不容易抄错
+    return jsonify({"ok":True, "msg":"已下单：" + settings.MODELS[i]["name"]})

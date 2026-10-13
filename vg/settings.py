@@ -8,7 +8,12 @@ import os
 #abspath() 绝对路径     dirname() 去掉最后一级，往上一级 往上两级刚好到项目根
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MODEL_PATH = os.path.join(BASE_DIR, "weights", "yolo11m.pt")
+# MODEL_PATH = os.path.join(BASE_DIR, "weights", "yolo11m.pt")
+MODELS = [
+    {"path": os.path.join(BASE_DIR, "weights", "yolo11m.pt"),        "name": "yolo11m 通用80类"},
+    {"path": os.path.join(BASE_DIR, "weights", "helmet_yolov8m.pt"), "name": "安全帽 Hardhat/NO-Hardhat"},
+]
+
 # SOURCE = os.path.join(BASE_DIR, "data", "raw", "traffic1.mp4")
 # SOURCE = 0
 # SOURCE = "rtsp://admin:qlhk&1111@192.168.8.222:554/1/2"

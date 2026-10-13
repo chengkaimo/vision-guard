@@ -5,10 +5,10 @@
 from ultralytics import YOLO
 import settings
 
+def load(path):
+    return YOLO(path)
 def load_model():
-    # model = settings.MODEL_PATH() ❌不能对字符串对象进行调用() TypeError: 'str' object is not callable
-    model = YOLO(settings.MODEL_PATH)
-    # pass
+    model = load(settings.MODELS)
     return model
 
 def detect(model, frame):
