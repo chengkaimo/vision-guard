@@ -32,7 +32,7 @@ SOURCES = [
 ]
 
 SCENES = [
-    {"name": "厂区消防",   "model": 2, "classes": ["fire", "smoke"],  "frames": 3, "conf":0.3},
+    {"name": "厂区消防",   "model": 2, "classes": ["fire"],  "frames": 3, "conf":0.3},
     {"name": "工地安全帽", "model": 1, "classes": ["NO-Hardhat"],     "frames": 5, "conf":0.4},
     {"name": "人员统计",   "model": 0, "classes": ["person"],         "frames": 5, "conf":0.4},
 ]

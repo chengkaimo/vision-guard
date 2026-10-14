@@ -6,7 +6,6 @@ import cv2
 import time
 import os
 from ultralytics import YOLO
-from ultralytics_platform.cli import kinds
 
 import settings
 
@@ -138,11 +137,11 @@ for wn, vn, r in rows:
 
 
 report_path = os.path.join(settings.BASE_DIR, "docs", "eval_report.md")
-# 加个已经存在文件不覆盖的判断
-i = 1
-while os.path.exists(report_path):
-    report_path = os.path.join(settings.BASE_DIR, "docs", f"eval_report_{i}.md")
-    i += 1
+# # 加个已经存在文件不覆盖的判断
+# i = 1
+# while os.path.exists(report_path):
+#     report_path = os.path.join(settings.BASE_DIR, "docs", f"eval_report_{i}.md")
+#     i += 1
 
 f = open(report_path, "w", encoding="utf-8")
 for line in lines:
