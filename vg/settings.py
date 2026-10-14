@@ -26,6 +26,9 @@ SOURCES = [
     {"kind": "image", "value": os.path.join(BASE_DIR, "data", "alarms", "alarm_20260930-155938.jpg"), "name":"照片"},
     {"kind": "video", "value": os.path.join(BASE_DIR, "data", "raw", "fireclose1.ogv"), "name": "近景柴火"},
     {"kind": "video", "value": os.path.join(BASE_DIR, "data", "raw", "wildfire1.webm"), "name": "野火航拍"},
+    {"kind": "video", "value": os.path.join(BASE_DIR, "data", "raw", "distant1.webm"), "name": "远景山火"},
+    {"kind": "video", "value": os.path.join(BASE_DIR, "data", "raw", "factory1.webm"), "name": "厂区产线"},
+    {"kind": "video", "value": os.path.join(BASE_DIR, "data", "raw", "factory2.ogv"), "name": "车间内景"},
 ]
 
 SCENES = [

@@ -13,6 +13,10 @@ VIDEOS = [
     ("野火航拍", os.path.join(settings.BASE_DIR, "data", "raw", "wildfire1.webm")),
     ("弱火困难", os.path.join(settings.BASE_DIR, "data", "raw", "fire.mp4")),
     ("人群对照", os.path.join(settings.BASE_DIR, "data", "raw", "crowd1.mp4")),
+    ("远景山火", os.path.join(settings.BASE_DIR, "data", "raw", "distant1.webm")),
+    ("极远景烟", os.path.join(settings.BASE_DIR, "data", "raw", "distant2.webm")),
+    ("厂区产线", os.path.join(settings.BASE_DIR, "data", "raw", "factory1.webm")),
+    ("车间内景", os.path.join(settings.BASE_DIR, "data", "raw", "factory2.ogv")),
 ]
 
 WEIGHTS = [
