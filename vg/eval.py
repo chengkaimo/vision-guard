@@ -6,6 +6,8 @@ import cv2
 import time
 import os
 from ultralytics import YOLO
+from ultralytics_platform.cli import kinds
+
 import settings
 
 VIDEOS = [
@@ -35,6 +37,7 @@ def eval_one(model, path):
     boxes= 0
     conf_sum = 0.0
     ms_sum = 0.0
+    kinds = {}  # 类别计数器：名字→出现次数
     while True:
         ok, frame = cap.read()
         if not ok:
@@ -51,6 +54,8 @@ def eval_one(model, path):
             hit = hit + 1
         for b in results[0].boxes:
             conf_sum = conf_sum + float(b.conf[0])
+            cname = results[0].names[int(b.cls[0])]  # 编号→名字
+            kinds[cname] = kinds.get(cname, 0) + 1  # 这个名字计数+1
     cap.release()
 
     samples = total // STEP     # 抽了几帧
@@ -63,7 +68,7 @@ def eval_one(model, path):
     avg_ms = 0.0
     if samples > 0:
         avg_ms = ms_sum / samples       #平均单帧毫秒
-    return {"samples":samples, "hit":hit, "rate":rate, "avg_conf":avg_conf, "avg_ms":avg_ms}
+    return {"samples":samples, "hit":hit, "rate":rate, "avg_conf":avg_conf, "avg_ms":avg_ms, "kinds": kinds}
 
 
 rows = []
@@ -88,35 +93,60 @@ for wname, vname, r in rows:
                     + " | " + str(round(r["rate"] * 100)) + "%"
                     + " | " + str(round(r["avg_conf"], 2))
                     + " | " + str(round(r["avg_ms"], 1)) + " |")
+lines.append("")
+lines.append("## 结论")
+lines.append("")
+lines.append("1.每个视频的最佳权重")
+for vname, vpath in VIDEOS:
+    best_name = ""
+    best_rate = -1.0
+    for wn, vn, r in rows:
+        if vn == vname and r["rate"] > best_rate:
+            best_rate = r["rate"]
+            best_name = wn
+    lines.append("- " + vname + ": 最佳 " + best_name + "（命中率 " + str(round(best_rate * 100)) + "%）")
+lines.append("2.每只权重认不出什么")
+for wname, wpath in WEIGHTS:
+    blind = []
+    for wn, vn, r in rows:
+        if wn == wname and r["rate"] == 0.0:
+            blind.append(vn)
+    if len(blind) == 0:
+        lines.append("-" + wname + "：本次所有的视频都可以认得出来")
+    else:
+        lines.append("-" + wname + "：认不出来" + "/".join(blind))
+lines.append("3.误检测清单")
+MIS = ["厂区产线", "车间内景", "人群对照"]
+for wn, vn, r in rows:
+    if vn in MIS and len(r["kinds"]) > 0:
+        kinds = dict(r["kinds"])        # 抄一份副本，删的时候不动原来的
+        top = []
+        for _ in range(3):              # 选三轮：top1, top2, top3
+            if len (kinds) == 0:
+                break
+            bk = ""
+            bv = -1
+            for k in kinds:
+                if kinds[k] > bv:
+                    bv = kinds[k]
+                    bk = k
+            top.append(bk + "x" + str(bv))
+            del kinds[bk]               # top1退场 下一轮top2才能进来
+        lines.append("- " + wn + " 在 " + vn + " 检的最多" + ", ".join(top))
+
+
+
 
 report_path = os.path.join(settings.BASE_DIR, "docs", "eval_report.md")
+# 加个已经存在文件不覆盖的判断
+i = 1
+while os.path.exists(report_path):
+    report_path = os.path.join(settings.BASE_DIR, "docs", f"eval_report_{i}.md")
+    i += 1
+
 f = open(report_path, "w", encoding="utf-8")
 for line in lines:
     f.write(line + "\n")
 f.close()
 print("报告写的路径：", report_path)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
