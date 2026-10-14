@@ -12,6 +12,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODELS = [
     {"path": os.path.join(BASE_DIR, "weights", "yolo11m.pt"),        "name": "yolo11m 通用80类"},
     {"path": os.path.join(BASE_DIR, "weights", "helmet_yolov8m.pt"), "name": "安全帽 Hardhat/NO-Hardhat"},
+    {"path": os.path.join(BASE_DIR, "weights", "fire_smoke_yolov8n.pt"), "name": "火焰烟雾 fire/smoke"},
 ]
 
 # SOURCE = 0
@@ -22,13 +23,15 @@ SOURCES = [
     {"kind": "video",  "value": os.path.join(BASE_DIR, "data", "raw", "crowd1.mp4"), "name": "人群视频"},
     {"kind": "video",  "value": os.path.join(BASE_DIR, "data", "raw", "fire.mp4"),  "name": "火焰视频"},
     {"kind": "camera", "value": 0,                                                  "name": "本机摄像头"},
-    {"kind": "image", "value": os.path.join(BASE_DIR, "data", "alarms", "alarm_20260930-155938.jpg"), "name":"照片"}
+    {"kind": "image", "value": os.path.join(BASE_DIR, "data", "alarms", "alarm_20260930-155938.jpg"), "name":"照片"},
+    {"kind": "video", "value": os.path.join(BASE_DIR, "data", "raw", "fireclose1.ogv"), "name": "近景柴火"},
+    {"kind": "video", "value": os.path.join(BASE_DIR, "data", "raw", "wildfire1.webm"), "name": "野火航拍"},
 ]
 
 SCENES = [
-    {"name": "厂区消防",   "model": 0, "classes": ["fire", "smoke"],  "frames": 5},
-    {"name": "工地安全帽", "model": 1, "classes": ["NO-Hardhat"],     "frames": 5},
-    {"name": "人员统计",   "model": 0, "classes": ["person"],         "frames": 5},
+    {"name": "厂区消防",   "model": 2, "classes": ["fire", "smoke"],  "frames": 3, "conf":0.3},
+    {"name": "工地安全帽", "model": 1, "classes": ["NO-Hardhat"],     "frames": 5, "conf":0.4},
+    {"name": "人员统计",   "model": 0, "classes": ["person"],         "frames": 5, "conf":0.4},
 ]
 
 ALARM_DIR = os.path.join(BASE_DIR, "data", "alarms")  # 报警图片记录

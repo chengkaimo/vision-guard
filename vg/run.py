@@ -34,7 +34,7 @@ def main():
     pack = settings.SCENES[0]  # 场景包0号
     m = settings.MODELS[pack["model"]]  # 模型包[场景包0号的模型健→值为0 取下标为0的模型 yolo11m的80类]
     model = detector.load(m["path"])
-    scene = Scene(pack["name"], pack["classes"], pack["frames"])
+    scene = Scene(pack["name"], pack["classes"], pack["frames"], pack["conf"])
     web.bind_scene(scene)
     web.LATEST["model_label"] = m["name"]
     web.LATEST["scene_label"] = pack["name"]
@@ -72,7 +72,7 @@ def main():
             m = settings.MODELS[pack["model"]]
             del model
             model = detector.load(m["path"])
-            scene = Scene(pack["name"], pack["classes"], pack["frames"])    # 新场景 = 新账本
+            scene = Scene(pack["name"], pack["classes"], pack["frames"], pack["conf"])    # 新场景 = 新账本
             web.bind_scene(scene)
             web.LATEST["model_label"] = m["name"]
             web.LATEST["scene_label"] = pack["name"]
@@ -89,7 +89,7 @@ def main():
             src.open()
             continue
 
-        vis, found = detector.detect_track(model, frame)
+        vis, found = detector.detect_track(model, frame, scene.conf)
 
         cv2.imshow(settings.WINDOW_NAME, vis)
         web.LATEST["vis"] = vis  # 画板 画好的vis挂上共享画板

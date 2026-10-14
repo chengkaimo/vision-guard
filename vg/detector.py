@@ -27,8 +27,8 @@ def detect(model, frame):
 
     return vis, found # 返回 画好的图vis给屏幕 登记表found给报警逻辑
 
-def detect_track(model, frame):
-    results = model.track(frame, conf=settings.CONF, persist=True, verbose=False)  # persist记住上一帧
+def detect_track(model, frame, conf):
+    results = model.track(frame, conf=conf, persist=True, verbose=False)  # persist记住上一帧
     result = results[0]
     vis = result.plot()
     names = result.names

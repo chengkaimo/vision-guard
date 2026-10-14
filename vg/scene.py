@@ -3,7 +3,7 @@ import time
 
 class Scene:
     # 场景出生登记
-    def __init__(self, name, alarm_classes, alarm_frames):
+    def __init__(self, name, alarm_classes, alarm_frames, conf):
         self.name = name                        #场景名
         self.alarm_classes = alarm_classes      #场景里的报警名单
         self.alarm_frames = alarm_frames        #场景里的消抖帧数
@@ -11,6 +11,7 @@ class Scene:
         self.first_seen = {}                    #第一次记录
         self.last_seen = {}                     #最后一次记录
         self.hit_count = 0                      #消抖计数器
+        self.conf = conf                        # 本场景的录用线 阈值
 
     # 功能： 只看本帧登记表，更新表+消抖判断 通知是否报警
     # ps：只判断不存档——判断归办事的，动手归run 职责分工
