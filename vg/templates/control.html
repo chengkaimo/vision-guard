@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    .row { margin-bottom: 20px; }
+    .btn {
+        border: 1px solid var(--line);
+        background: var(--card);
+        color: var(--ink);
+        padding: 8px 16px;
+        border-radius: 999px;
+        margin: 6px 8px 0 0;
+        cursor: pointer;
+    }
+    .now {
+        color: var(--muted);
+        font-size: 14px;
+        margin-left: 10px;
+    }
+</style>
+<script>
+    function refresh_label(api, slot) {
+        fetch(api)
+            .then(function (resp) { return resp.json(); })
+            .then(function (data) {
+                document.getElementById(slot).innerText = data.current;
+            });
+    }
+
+    function build_box(api, box_id, set_api) {
+        fetch(api)
+            .then(function (resp) { return resp.json(); })
+            .then(function (data) {
+                var html = "";
+                for (var i = 0; i < data.menu.length; i++) {
+                    html = html + '<button class="btn" data-i="' + data.menu[i].i + '">'
+                         + data.menu[i].name + '</button>';
+                }
+                var box = document.getElementById(box_id);
+                box.innerHTML = html;
+                box.onclick = function (ev) {  //一整盒按钮只挂一个 onclick 点击会从按钮冒泡到盒子
+                    var i = ev.target.getAttribute("data-i");
+                    if (i === null) { return; }
+                    fetch(set_api + "?i=" + i)
+                        .then(function (resp) { return resp.json(); })
+                        .then(function (data2) {
+                            document.getElementById("msg").innerText = data2.msg;
+                        });
+                };
+            });
+    }
+
+    function tick() {
+        refresh_label("/api/sources", "now_source");
+        refresh_label("/api/models", "now_model");
+        refresh_label("/api/scenes", "now_scene");
+    }
+
+    build_box("/api/sources", "box_source", "/api/set_source");
+    build_box("/api/models", "box_model", "/api/set_model");
+    build_box("/api/scenes", "box_scene", "/api/set_scene");
+    tick();
+    setInterval(tick, 2000);
+</script>
+{% endblock %}
+
+{% block content %}
+<h1>控制台</h1>
+<p class="sub" id="msg">点按钮选择，主循环下一帧执行你的选择</p>
+
+<div class="card row">
+    <b>视频源</b>
+    <span class="now" id="now_source"></span>
+    <div id="box_source"></div>
+</div>
+<div class="card row">
+    <b>权重</b>
+    <span class="now" id="now_model"></span>
+    <div id="box_model"></div>
+</div>
+<div class="card row">
+    <b>场景</b>
+    <span class="now" id="now_scene"></span>
+    <div id="box_scene"></div>
+</div>
+{% endblock %}

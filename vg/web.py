@@ -141,6 +141,11 @@ def api_metrics():
 def metrics_page():
     return render_template("metrics.html", page_title="性能仪表盘")
 
+@app.route("/control")  # 控制台页
+def control_page():
+    return render_template("control.html", page_title="控制台")
+
+
 
 @app.route("/api/sources")
 def api_sources():
