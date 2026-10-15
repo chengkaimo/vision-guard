@@ -18,7 +18,7 @@ def main():
     web.LATEST["model_label"] = first_model["name"]
     print("当前类别表：", model.names)  # model.names是类别表 字典 编号→名字
 
-    first = settings.SOURCES[0]
+    first = settings.SOURCES[6]
     src = Source(first["kind"], first["value"])
     if not src.open():
         print("源打不开：", src.label())
@@ -32,7 +32,7 @@ def main():
     # scene = Scene(settings.SCENE_NAME, settings.ALARM_CLASSES, settings.ALARM_FRAMES)
     # web.bind_scene(scene)
     pack = settings.SCENES[0]  # 场景包0号
-    m = settings.MODELS[pack["model"]]  # 模型包[场景包0号的模型健→值为0 取下标为0的模型 yolo11m的80类]
+    m = settings.MODELS[pack["model"]]  # 模型包[场景包0号的模型健→值为2 取下标为2的模型 火焰烟雾v8n]
     model = detector.load(m["path"])
     scene = Scene(pack["name"], pack["classes"], pack["frames"], pack["conf"])
     web.bind_scene(scene)
